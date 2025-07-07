@@ -29,14 +29,21 @@ This plan breaks down the required features from the specs into detailed, action
 
 - [ ] Show loading state while restoring data on startup (if needed).
 
-### 1.4. Testing
+### 1.4. Deletion Confirm Modals & Related UI
 
-- [ ] Write unit tests for persistence logic (save/load/clear).
-- [ ] Write e2e tests to assert images and folders persist after page refresh.
+- [ ] Add a confirm modal when deleting a folder.
+- [ ] Add a button to delete selected images with a confirm modal.
 
-### 1.5. Documentation
+### 1.5. e2e Tests for Persistence & Deletion
 
-- [ ] Update documentation to describe persistence behavior.
+- [ ] Write e2e tests asserting the images and folders are persistent when the page is refreshed.
+- [ ] Update the delete folder e2e test to check for the confirm modal and ensure it passes.
+- [ ] Write an e2e test asserting images are indeed deleted with their folder (including subfolders).
+- [ ] Write an e2e test asserting selected images are indeed deleted after confirmation.
+
+### 1.6. Documentation
+
+- [ ] Update documentation to describe persistence and deletion confirm modal behavior.
 
 ---
 
