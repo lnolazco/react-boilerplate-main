@@ -66,7 +66,7 @@ export const SideNav = observer(({ className, ...props }: SideNavProps) => {
             {folder.name}
           </NavLink>
         </div>,
-        ...(isExpanded ? renderFolderTree(folder.parentId, depth + 1) : []),
+        ...(isExpanded ? renderFolderTree(folder.id, depth + 1) : []),
       ];
     });
   };
