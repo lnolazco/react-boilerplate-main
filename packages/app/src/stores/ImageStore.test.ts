@@ -127,3 +127,51 @@ describe("ImageStore persistence (localStorage)", () => {
     expect(ImageStore.loadFromStorage()).toBeNull();
   });
 });
+
+describe("ImageStore nested folders", () => {
+  it("creates folders with and without parentId", () => {
+    const store = new ImageStore();
+    const rootId = store.createFolder("Root");
+    const childId = store.createFolder("Child", rootId);
+    const root = store.getFolder(rootId)!;
+    const child = store.getFolder(childId)!;
+    expect(root.parentId).toBeUndefined();
+    expect(child.parentId).toBe(rootId);
+  });
+
+  it("getRootFolders and getChildFolders work as expected", () => {
+    const store = new ImageStore();
+    const root1 = store.createFolder("Root1");
+    const root2 = store.createFolder("Root2");
+    const child1 = store.createFolder("Child1", root1);
+    const child2 = store.createFolder("Child2", root1);
+    const child3 = store.createFolder("Child3", root2);
+    expect(
+      store
+        .getRootFolders()
+        .map((f) => f.name)
+        .sort()
+    ).toEqual(["Root1", "Root2"]);
+    expect(
+      store
+        .getChildFolders(root1)
+        .map((f) => f.name)
+        .sort()
+    ).toEqual(["Child1", "Child2"]);
+    expect(store.getChildFolders(root2).map((f) => f.name)).toEqual(["Child3"]);
+    expect(store.getChildFolders(child1)).toEqual([]);
+  });
+
+  it("serializes and deserializes parentId correctly", () => {
+    const store = new ImageStore();
+    const rootId = store.createFolder("Root");
+    const childId = store.createFolder("Child", rootId);
+    const serialized = store.serialize();
+    const newStore = new ImageStore();
+    newStore.deserialize(serialized);
+    const root = newStore.getFolder(rootId)!;
+    const child = newStore.getFolder(childId)!;
+    expect(root.parentId).toBeUndefined();
+    expect(child.parentId).toBe(rootId);
+  });
+});

@@ -15,6 +15,7 @@ export interface Image {
 export interface Folder {
   id: string;
   name: string;
+  parentId?: string;
 }
 
 // Data schemas for serialization
@@ -72,10 +73,11 @@ export class ImageStore {
     }
   }
 
-  createFolder = (name: string): string => {
+  createFolder = (name: string, parentId?: string): string => {
     const newFolder: Folder = {
       id: uuidv4(),
       name,
+      parentId,
     };
     this._folders.set(newFolder.id, newFolder);
     return newFolder.id;
@@ -206,6 +208,14 @@ export class ImageStore {
       // Ignore parse errors
     }
     return null;
+  }
+
+  // --- Hierarchy helpers ---
+  getRootFolders(): Folder[] {
+    return this.folders.filter((f) => !f.parentId);
+  }
+  getChildFolders(parentId: string): Folder[] {
+    return this.folders.filter((f) => f.parentId === parentId);
   }
 }
 
