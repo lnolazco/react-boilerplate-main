@@ -79,7 +79,6 @@ export const FolderForm = observer(
             options={folderOptions}
             value={parentId}
             onValueChange={setParentId}
-            label="Parent folder"
             placeholder="Select parent folder..."
           />
         </FieldLabel>
