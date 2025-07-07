@@ -1,7 +1,7 @@
-import { Button, NavLink } from "@repo/ui";
+import { Button, NavLink, Select, SelectOption } from "@repo/ui";
 import { FolderIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import clsx from "clsx";
 
 import { imageStore } from "../stores/ImageStore";
@@ -14,6 +14,25 @@ export type MoveImagesProps = {
 
 export const MoveImages = observer(
   ({ imageIds, onSuccess, onCancel }: MoveImagesProps) => {
+    const [selectedFolder, setSelectedFolder] = useState<string>("");
+
+    // Build hierarchical options for the Select
+    const folderOptions = useMemo(() => {
+      const buildOptions = (
+        folders: typeof imageStore.folders,
+        parent: string | undefined,
+        depth: number
+      ): SelectOption[] => {
+        return folders
+          .filter((f) => f.parentId === parent)
+          .flatMap((f) => [
+            { value: f.id, label: f.name, depth },
+            ...buildOptions(folders, f.id, depth + 1),
+          ]);
+      };
+      return buildOptions(imageStore.folders, undefined, 0);
+    }, [imageStore.folders]);
+
     const handleMove = useCallback(
       (folderId: string) => {
         imageStore.moveImages(imageIds, folderId);
@@ -22,34 +41,23 @@ export const MoveImages = observer(
       [imageIds, onSuccess]
     );
 
-    // Recursive rendering of folder tree for move target selection
-    const renderFolderTree = (
-      parentId: string | undefined,
-      depth: number = 0
-    ): React.ReactNode[] => {
-      const folders = parentId
-        ? imageStore.getChildFolders(parentId)
-        : imageStore.getRootFolders();
-      return folders.flatMap((folder) => [
-        <NavLink
-          as="button"
-          key={folder.id}
-          icon={FolderIcon}
-          onClick={() => handleMove(folder.id)}
-          className={clsx({ [`pl-${(depth + 1) * 4}`]: depth > 0 })}
-        >
-          {folder.name}
-        </NavLink>,
-        ...renderFolderTree(folder.id, depth + 1),
-      ]);
-    };
-
     return (
       <div className="space-y-4">
-        <div className="flex flex-col gap-1">
-          {renderFolderTree(undefined, 0)}
-        </div>
-        <div className="flex justify-end">
+        <Select
+          options={folderOptions}
+          value={selectedFolder}
+          onValueChange={setSelectedFolder}
+          label="Move to folder"
+          placeholder="Select target folder..."
+        />
+        <div className="flex justify-end gap-2">
+          <Button
+            onClick={() => handleMove(selectedFolder)}
+            disabled={!selectedFolder}
+            variant="primary"
+          >
+            Move
+          </Button>
           <Button onClick={onCancel}>Cancel</Button>
         </div>
       </div>
