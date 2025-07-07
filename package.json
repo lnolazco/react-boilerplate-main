@@ -1,0 +1,24 @@
+{
+  "name": "react-boilerplate",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": "18.19.1"
+  },
+  "workspaces": [
+    "packages/ui",
+    "packages/app"
+  ],
+  "scripts": {
+    "lint": "eslint --max-warnings 0",
+    "format": "eslint --fix"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.15.0",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}

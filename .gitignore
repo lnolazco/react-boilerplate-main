@@ -1,0 +1,17 @@
+# System
+.idea
+.DS_Store
+NOTES.md
+
+# Config
+*.env*
+!.env
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Dependencies & build
+node_modules
+dist
+*-lock.*
+*.log*

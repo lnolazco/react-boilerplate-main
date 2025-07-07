@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* regular */
+  @font-face {
+    font-family: "TT Interphases Pro";
+    src:
+      url("/fonts/TT_Interphases_Pro_Regular.woff2") format("woff2"),
+      url("/fonts/TT_Interphases_Pro_Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* medium */
+  @font-face {
+    font-family: "TT Interphases Pro";
+    src:
+      url("/fonts/TT_Interphases_Pro_Medium.woff2") format("woff2"),
+      url("/fonts/TT_Interphases_Pro_Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* demi bold */
+  @font-face {
+    font-family: "TT Interphases Pro";
+    src:
+      url("/fonts/TT_Interphases_Pro_DemiBold.woff2") format("woff2"),
+      url("/fonts/TT_Interphases_Pro_DemiBold.woff") format("woff");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* bold */
+  @font-face {
+    font-family: "TT Interphases Pro";
+    src:
+      url("/fonts/TT_Interphases_Pro_Bold.woff2") format("woff2"),
+      url("/fonts/TT_Interphases_Pro_Bold.woff") format("woff");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* extra bold */
+  @font-face {
+    font-family: "TT Interphases Pro";
+    src:
+      url("/fonts/TT_Interphases_Pro_ExtraBold.woff2") format("woff2"),
+      url("/fonts/TT_Interphases_Pro_ExtraBold.woff") format("woff");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: theme("colors.neutral.900");
+    color: theme("colors.neutral.50");
+  }
+}
