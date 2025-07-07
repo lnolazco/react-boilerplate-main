@@ -95,10 +95,22 @@ export class ImageStore {
   }
 
   deleteFolder(folderId: string) {
-    const folder = this._folders.get(folderId);
-    if (folder) {
-      this._folders.delete(folderId);
-    }
+    // Recursively delete all child folders
+    const deleteRecursive = (id: string) => {
+      // Delete all images in this folder
+      const imagesToDelete = this.images
+        .filter((img) => img.folderId === id)
+        .map((img) => img.id);
+      this.deleteImages(imagesToDelete);
+      // Find and delete all child folders
+      const childFolders = this.getChildFolders(id);
+      for (const child of childFolders) {
+        deleteRecursive(child.id);
+      }
+      // Delete the folder itself
+      this._folders.delete(id);
+    };
+    deleteRecursive(folderId);
   }
 
   private async processUploadQueue() {
