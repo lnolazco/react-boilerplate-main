@@ -1,6 +1,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import clsx from "clsx";
 import { XIcon } from "lucide-react";
+import React from "react";
 
 import { Button } from "./Button";
 import { Divider } from "./Divider";
@@ -12,6 +13,7 @@ export type DialogTriggerProps = DialogPrimitive.DialogTriggerProps;
 export type DialogContentProps = DialogPrimitive.DialogContentProps &
   Readonly<{
     title: React.ReactNode;
+    description?: React.ReactNode;
   }>;
 
 export const Dialog = (props: DialogProps) => {
@@ -24,15 +26,18 @@ const DialogTrigger = (props: DialogTriggerProps) => {
 
 const DialogContent = ({
   title,
+  description,
   className,
   children,
   ...props
 }: DialogContentProps) => {
+  const descriptionId = React.useId();
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 bg-neutral-950/80" />
       <DialogPrimitive.Content
         {...props}
+        aria-describedby={description ? descriptionId : undefined}
         className={clsx(
           "pointer-events-none overflow-hidden",
           "fixed inset-0 z-50",
@@ -53,6 +58,14 @@ const DialogContent = ({
                 {title}
               </Heading>
             </DialogPrimitive.Title>
+            {description && (
+              <DialogPrimitive.Description
+                id={descriptionId}
+                className="mt-1 text-neutral-300 text-sm"
+              >
+                {description}
+              </DialogPrimitive.Description>
+            )}
             <Divider className="mt-1" />
             <DialogPrimitive.Close asChild>
               <Button

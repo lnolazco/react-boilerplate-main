@@ -66,7 +66,10 @@ export const ImagesList = observer(({ folderId }: ImagesListProps) => {
                 {moveLabel}
               </Button>
             </Dialog.Trigger>
-            <Dialog.Content title={moveLabel}>
+            <Dialog.Content
+              title={moveLabel}
+              description="Select a folder to move the selected images to."
+            >
               <MoveImages
                 imageIds={selected}
                 onSuccess={() => {
@@ -92,7 +95,10 @@ export const ImagesList = observer(({ folderId }: ImagesListProps) => {
                 Delete selected
               </Button>
             </Dialog.Trigger>
-            <Dialog.Content title="Delete selected images?">
+            <Dialog.Content
+              title="Delete selected images?"
+              description="This will permanently delete the selected images. This action cannot be undone."
+            >
               <div className="space-y-4">
                 <p>
                   This will permanently delete the selected images. This action

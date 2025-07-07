@@ -88,7 +88,10 @@ export const SideNav = observer(({ className, ...props }: SideNavProps) => {
         <Dialog.Trigger>
           <Button icon={PlusIcon}>Create folder</Button>
         </Dialog.Trigger>
-        <Dialog.Content title="New folder">
+        <Dialog.Content
+          title="New folder"
+          description="Create a new folder. Optionally select a parent folder to nest it."
+        >
           <FolderForm
             onSuccess={({ id }) => {
               setIsDialogOpen(false);
