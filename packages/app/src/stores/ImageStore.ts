@@ -16,7 +16,16 @@ export interface Folder {
   name: string;
 }
 
-class ImageStore {
+// Data schemas for serialization
+export type SerializedImage = Image;
+export type SerializedFolder = Folder;
+
+export interface SerializedState {
+  images: SerializedImage[];
+  folders: SerializedFolder[];
+}
+
+export class ImageStore {
   private _images: Map<string, Image> = new Map();
   private _folders: Map<string, Folder> = new Map();
   private uploadQueue: Array<{ file: File; folderId?: string }> = [];
@@ -148,6 +157,26 @@ class ImageStore {
       throw error; // Re-throw for error handling in UI
     }
   };
+
+  // --- Serialization/Deserialization ---
+  /**
+   * Export the current state to a plain object for storage.
+   */
+  serialize(): SerializedState {
+    return {
+      images: Array.from(this._images.values()),
+      folders: Array.from(this._folders.values()),
+    };
+  }
+
+  /**
+   * Load state from a plain object (e.g., from localStorage).
+   * This replaces the current state.
+   */
+  deserialize(state: SerializedState) {
+    this._images = new Map(state.images.map((img) => [img.id, img]));
+    this._folders = new Map(state.folders.map((folder) => [folder.id, folder]));
+  }
 }
 
 export const imageStore = new ImageStore();
