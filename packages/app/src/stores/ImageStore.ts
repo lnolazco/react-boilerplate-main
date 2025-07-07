@@ -3,6 +3,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
 const BASE64_IMAGE_HEADER = "data:image/png;base64,";
+const STORAGE_KEY = "photoroom-image-store";
 
 export interface Image {
   id: string;
@@ -176,6 +177,35 @@ export class ImageStore {
   deserialize(state: SerializedState) {
     this._images = new Map(state.images.map((img) => [img.id, img]));
     this._folders = new Map(state.folders.map((folder) => [folder.id, folder]));
+  }
+
+  /**
+   * Save the current state to localStorage.
+   */
+  saveToStorage() {
+    const state = this.serialize();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  /**
+   * Load state from localStorage, if present. Returns true if loaded, false if not.
+   */
+  static loadFromStorage(): SerializedState | null {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    try {
+      const state = JSON.parse(raw);
+      if (
+        state &&
+        Array.isArray(state.images) &&
+        Array.isArray(state.folders)
+      ) {
+        return state;
+      }
+    } catch (e) {
+      // Ignore parse errors
+    }
+    return null;
   }
 }
 

@@ -60,3 +60,70 @@ describe("ImageStore serialization", () => {
     ]);
   });
 });
+
+describe("ImageStore persistence (localStorage)", () => {
+  const STORAGE_KEY = "photoroom-image-store";
+  let originalLocalStorage: Storage;
+  let localStorageMock: any;
+
+  beforeEach(() => {
+    // Mock localStorage
+    originalLocalStorage = global.localStorage;
+    let store: Record<string, string> = {};
+    localStorageMock = {
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => {
+        store[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
+    };
+    // @ts-ignore
+    global.localStorage = localStorageMock;
+  });
+
+  afterEach(() => {
+    // @ts-ignore
+    global.localStorage = originalLocalStorage;
+  });
+
+  it("saves state to localStorage", () => {
+    const store = new ImageStore();
+    const folder: Folder = { id: "f1", name: "Folder" };
+    const image: Image = {
+      id: "i1",
+      name: "img.png",
+      base64: "data",
+      folderId: "f1",
+    };
+    (store as any)._folders.set(folder.id, folder);
+    (store as any)._images.set(image.id, image);
+    store.saveToStorage();
+    const saved = localStorageMock.getItem(STORAGE_KEY);
+    expect(saved).toBe(JSON.stringify({ images: [image], folders: [folder] }));
+  });
+
+  it("loads state from localStorage", () => {
+    const state: SerializedState = {
+      images: [{ id: "i1", name: "img.png", base64: "data", folderId: "f1" }],
+      folders: [{ id: "f1", name: "Folder" }],
+    };
+    localStorageMock.setItem(STORAGE_KEY, JSON.stringify(state));
+    const loaded = ImageStore.loadFromStorage();
+    expect(loaded).toEqual(state);
+  });
+
+  it("returns null if nothing in storage", () => {
+    localStorageMock.removeItem(STORAGE_KEY);
+    expect(ImageStore.loadFromStorage()).toBeNull();
+  });
+
+  it("returns null if storage is corrupted", () => {
+    localStorageMock.setItem(STORAGE_KEY, "not-json");
+    expect(ImageStore.loadFromStorage()).toBeNull();
+  });
+});
