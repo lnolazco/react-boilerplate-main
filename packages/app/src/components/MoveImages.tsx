@@ -1,8 +1,6 @@
-import { Button, NavLink, Select, SelectOption } from "@repo/ui";
-import { FolderIcon } from "lucide-react";
+import { Button, Select, SelectOption } from "@repo/ui";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo, useState } from "react";
-import clsx from "clsx";
 
 import { imageStore } from "../stores/ImageStore";
 
