@@ -1,5 +1,5 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { StrictMode } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import "@repo/ui/styles/tailwind.css";
@@ -17,23 +17,41 @@ declare module "@tanstack/react-router" {
   }
 }
 
-// Load persisted state on startup
-const persisted = ImageStore.loadFromStorage();
-if (persisted) {
-  imageStore.deserialize(persisted);
-}
+function AppWithHydration() {
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    // Simulate async hydration (future-proofing)
+    const persisted = ImageStore.loadFromStorage();
+    if (persisted) {
+      imageStore.deserialize(persisted);
+    }
+    setIsHydrated(true);
+  }, []);
 
-// Save to storage on every change to images or folders
-reaction(
-  () => [imageStore.images, imageStore.folders],
-  () => {
-    imageStore.saveToStorage();
+  useEffect(() => {
+    // Save to storage on every change to images or folders
+    const disposer = reaction(
+      () => [imageStore.images, imageStore.folders],
+      () => {
+        imageStore.saveToStorage();
+      }
+    );
+    return () => disposer();
+  }, []);
+
+  if (!isHydrated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
   }
-);
+  return <RouterProvider router={router} />;
+}
 
 // Render app
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AppWithHydration />
   </StrictMode>
 );
