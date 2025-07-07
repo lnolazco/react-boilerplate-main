@@ -1,7 +1,13 @@
 import { Button, Dialog, Divider, NavLink } from "@repo/ui";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import clsx from "clsx";
-import { FolderIcon, HomeIcon, PlusIcon } from "lucide-react";
+import {
+  FolderIcon,
+  HomeIcon,
+  PlusIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
@@ -15,8 +21,55 @@ export const SideNav = observer(({ className, ...props }: SideNavProps) => {
     strict: false,
   });
   const navigate = useNavigate();
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const toggleExpand = (id: string) => {
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const renderFolderTree = (
+    parentId: string | undefined,
+    depth: number = 0
+  ): React.ReactNode[] => {
+    const folders = parentId
+      ? imageStore.getChildFolders(parentId)
+      : imageStore.getRootFolders();
+    return folders.flatMap((folder) => {
+      const children = imageStore.getChildFolders(folder.id);
+      const isExpanded = !!expanded[folder.id];
+      return [
+        <div key={folder.id} className="flex items-center">
+          {children.length > 0 ? (
+            <button
+              type="button"
+              aria-label={isExpanded ? "Collapse" : "Expand"}
+              onClick={() => toggleExpand(folder.id)}
+              tabIndex={0}
+            >
+              {isExpanded ? (
+                <ChevronDownIcon size={16} />
+              ) : (
+                <ChevronRightIcon size={16} />
+              )}
+            </button>
+          ) : (
+            <span className={clsx("w-5", { invisible: depth === 0 })} />
+          )}
+          <NavLink
+            as={Link}
+            to={`/folders/${folder.id}`}
+            icon={FolderIcon}
+            aria-current={folderId === folder.id}
+            className={clsx({ [`pl-${(depth + 1) * 4}`]: depth > 0 })}
+          >
+            {folder.name}
+          </NavLink>
+        </div>,
+        ...(isExpanded ? renderFolderTree(folder.parentId, depth + 1) : []),
+      ];
+    });
+  };
 
   return (
     <nav
@@ -28,17 +81,7 @@ export const SideNav = observer(({ className, ...props }: SideNavProps) => {
       </NavLink>
       <Divider />
       <div className="grow overflow-y-auto scrollbar-none flex flex-col gap-1">
-        {imageStore.folders.map((folder) => (
-          <NavLink
-            as={Link}
-            key={folder.id}
-            to={`/folders/${folder.id}`}
-            icon={FolderIcon}
-            aria-current={folderId === folder.id}
-          >
-            {folder.name}
-          </NavLink>
-        ))}
+        {renderFolderTree(undefined, 0)}
       </div>
       <Divider />
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

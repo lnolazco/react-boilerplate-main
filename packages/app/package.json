@@ -11,6 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^2.2.5",
     "@repo/ui": "*",
     "@tanstack/react-query": "^5.59.16",
     "@tanstack/react-router": "^1.77.5",

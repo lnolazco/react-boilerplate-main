@@ -57,7 +57,7 @@ This plan breaks down the required features from the specs into detailed, action
 
 ### 2.2. FolderForm Enhancements
 
-- [ ] Update FolderForm modal to allow selecting a parent folder when creating/editing a folder.
+- [ ] Update FolderForm modal to allow selecting a parent folder when creating/editing a folder. Follow the designs in this image specs/screenshots/nested-folders-form.png where there is a dropdown to select the parent folder.
   - [ ] Integrate new select component for parent folder selection.
   - [ ] Ensure the select displays the folder hierarchy (tree view).
 
