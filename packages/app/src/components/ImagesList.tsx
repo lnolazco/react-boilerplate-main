@@ -1,5 +1,5 @@
 import { Button, CheckBox, Dialog, DropZone, ImagePreview } from "@repo/ui";
-import { FolderInputIcon } from "lucide-react";
+import { FolderInputIcon, Trash2Icon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ export type ImagesListProps = {
 export const ImagesList = observer(({ folderId }: ImagesListProps) => {
   const [selected, setSelected] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const images = imageStore.getImagesInFolder(folderId);
 
@@ -76,6 +77,46 @@ export const ImagesList = observer(({ folderId }: ImagesListProps) => {
                   setIsDialogOpen(false);
                 }}
               />
+            </Dialog.Content>
+          </Dialog>
+          <Dialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
+            <Dialog.Trigger>
+              <Button
+                variant="muted"
+                disabled={selected.length === 0}
+                icon={Trash2Icon}
+              >
+                Delete selected
+              </Button>
+            </Dialog.Trigger>
+            <Dialog.Content title="Delete selected images?">
+              <div className="space-y-4">
+                <p>
+                  This will permanently delete the selected images. This action
+                  can not be undone.
+                </p>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="muted"
+                    onClick={() => setIsDeleteDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      imageStore.deleteImages(selected);
+                      setSelected([]);
+                      setIsDeleteDialogOpen(false);
+                    }}
+                  >
+                    Delete images
+                  </Button>
+                </div>
+              </div>
             </Dialog.Content>
           </Dialog>
         </div>

@@ -13,10 +13,11 @@ export const Route = createFileRoute("/folders/$folderId")({
   component: () => <RouteComponent />,
 });
 
-const RouteComponent = observer(() => {
+export const RouteComponent = observer(() => {
   const { folderId } = Route.useParams();
   const folder = imageStore.getFolder(folderId);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() =>
@@ -44,12 +45,41 @@ const RouteComponent = observer(() => {
               />
             </Dialog.Content>
           </Dialog>
-          <Button
-            onClick={() => imageStore.deleteFolder(folder.id)}
-            icon={Trash2Icon}
+          <Dialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
           >
-            Delete folder
-          </Button>
+            <Dialog.Trigger>
+              <Button icon={Trash2Icon} variant="muted">
+                Delete folder
+              </Button>
+            </Dialog.Trigger>
+            <Dialog.Content title="Delete folder?">
+              <div className="space-y-4">
+                <p>
+                  Deleting a folder will also delete all subfolders and images
+                  in them. This action can not be undone.
+                </p>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="muted"
+                    onClick={() => setIsDeleteDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      imageStore.deleteFolder(folder.id);
+                      setIsDeleteDialogOpen(false);
+                    }}
+                  >
+                    Delete folder
+                  </Button>
+                </div>
+              </div>
+            </Dialog.Content>
+          </Dialog>
         </div>
       </header>
       <Divider />
