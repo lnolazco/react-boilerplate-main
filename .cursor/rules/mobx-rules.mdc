@@ -1,0 +1,70 @@
+---
+description: When requesting a change that is related to the state management of the project.
+alwaysApply: false
+---
+
+# General rules for all .tsx files
+
+# ------------------------------
+
+- match: "\*_/_.tsx"
+  rules:
+  - "Use functional components and hooks over class components."
+  - "Use arrow functions to create the components and add proper typings wherever needed."
+  - "Always split the component code from styles. Styles should always go in a separate file."
+  - "Use MobX's `makeObservable` or `makeAutoObservable` for making classes observable."
+  - "Use `observer` HOC or `useObserver` hook for reactive components."
+  - "Use `reaction` for side-effects based on observable changes."
+
+# Specific rules for store files (e.g., store.ts)
+
+# ------------------------------
+
+- match: "\*\*/store.ts"
+  rules:
+  - "Use `makeAutoObservable` for store initialization."
+  - "Define observables using `@observable` decorator or `makeObservable`."
+  - "Define actions using `@action` decorator or `makeObservable`."
+  - "Keep stores focused on state management and logic, avoid UI-related code."
+
+# Example of specific rules for a component file (e.g., MyComponent.tsx)
+
+# ------------------------------
+
+- match: "\*\*/MyComponent.tsx"
+  rules:
+  - "Use a separate `styles.ts` file for component styling."
+  - "Declare the component as an arrow function and export it as default."
+  - "If using a store, import and use it within the component."
+  - "If using a computed value, ensure it's used within an observer."
+
+# General guidelines for MobX usage
+
+# ------------------------------
+
+- match: "\*_/_" # Applies to all files
+  rules:
+  - "Use TypeScript for type safety."
+  - "Implement strict mode for MobX for better debugging."
+  - "Use MobX DevTools for debugging."
+  - "Consider proxy support for MobX, depending on your target environment."
+
+# Example of how to handle common patterns
+
+# ------------------------------
+
+- match: "\*_/_"
+  rules:
+  - "Always prefer MobX's reactivity system over manual state updates."
+  - "Avoid directly modifying observable properties outside of actions."
+  - "Be mindful of performance implications when using computed values and reactions."
+
+# Avoid certain patterns
+
+# ------------------------------
+
+- match: "\*_/_"
+  rules:
+  - "Avoid using class components unless absolutely necessary."
+  - "Avoid directly accessing the store's state outside of observer components or actions."
+  - "Avoid unnecessary re-renders by optimizing computed values."
